@@ -10,6 +10,7 @@
 
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="../js/jquery.cookie.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
         <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet" type="text/css">
@@ -28,10 +29,12 @@
                 </div>
                 <div class="collapse navbar-collapse" id="mainNavBar">
                     <ul class="nav navbar-nav">
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Contact us</a></li>
+                        <li><a href="../addProp.html">Add property</a></li>
+                        <li><a href="../myProps.html">My properties</a></li>
+                        <li><a href="../myRentals.html">My rentals</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
+                        <li><a id="userName" href="#"></a></li>
                         <li><a href="signin.html">Sign in</a></li>
                     </ul>
                 </div>
@@ -39,22 +42,50 @@
         </nav>
 
         <div class="wrapper">
-            <form class="form-signin">       
+            <form action="http://localhost:8080/RentUA_RestAPI/rest/user" method="post" name="myform" id="myForm" class="form-signin">       
                 <h2 class="form-signin-heading">Sign Up</h2>
                 <hr>
-                <div class="row">
-                    <div class="col-md-6"><input type="text" class="form-control" name="fname" placeholder="First Name" required></div>
-                    <div class="col-md-6"><input type="text" class="form-control" name="lname" placeholder="Last Name" required></div>
-                </div>
-                <input type="email" class="form-control" name="username" placeholder="Email Address" required autofocus="" />
+                <input type="text" class="form-control" name="name" placeholder="Name" required autofocus />
                 <input type="password" class="form-control" name="password" placeholder="Password" required/>
-                <div class="row">
-                    <div class="col-md-6"><input type="radio" name="usertype" value="student" checked>Student</div>
-                    <div class="col-md-6"><input type="radio" name="usertype" value="landlord">Landlord</div>
-                </div>
                 <hr>
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>   
             </form>
         </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                name = $.cookie("name");
+                if (name)
+                    $("#userName").text(name);
+                
+                var frm = $(document.myform);
+                frm.submit(function () {
+                    var form = document.myform;
+                    event.preventDefault();
+
+                    var data = {};
+                    for (var i = 0, ii = form.length; i < ii; ++i) {
+                        var input = form[i];
+                        if (input.name) {
+                            data[input.name] = input.value;
+                        }
+                    }
+
+                    // construct an HTTP request
+                    var xhr = new XMLHttpRequest();
+                    xhr.open(form.method, form.action, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+                    // send the collected data as JSON
+                    xhr.send(JSON.stringify(data));
+                    xhr.onloadend = function () {
+                        if (xhr.status === 201) {
+                            alert("Sign In Done");
+                        } else {
+                            alert("Error!");
+                        }
+                    };
+                });
+            });
+        </script>
     </body>
 </html>

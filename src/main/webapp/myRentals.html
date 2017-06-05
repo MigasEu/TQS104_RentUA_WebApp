@@ -25,7 +25,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">RentUA</a>
+                    <a class="navbar-brand" href="index.html">RentUA</a>
                 </div>
                 <div class="collapse navbar-collapse" id="mainNavBar">
                     <ul class="nav navbar-nav">
@@ -58,27 +58,31 @@
                 if (name)
                     $("#userName").text(name);
                 
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://localhost:8080/RentUA_RestAPI/rest/property", true);
-                xhr.setRequestHeader('Accept', 'application/json; charset=UTF-8');
-                xhr.send();
-                xhr.onloadend = function () {
-                    var list = JSON.parse(this.responseText);
-                    for(var i in list) {
-                        $("#list").append('\n\
+                if (name) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "http://localhost:8080/RentUA_RestAPI/rest/rental/user/" + name, true);
+                    xhr.setRequestHeader('Accept', 'application/json; charset=UTF-8');
+                    xhr.send();
+                    xhr.onloadend = function () {
+                        var list = JSON.parse(this.responseText);
+                        for (var i in list) {
+                            $("#list").append('\n\
                                 <div class="col-sm-4 col-lg-4 col-md-4">\n\
                                     <div class="thumbnail">\n\
                                         <div class="caption">\n\
-                                            <h4 class="pull-right">'+list[i].price+'</h4>\n\
-                                            <h4><a href="prop.html?id='+list[i].id+'">'+list[i].title+'</a>\n\
+                                            <h4><a href="prop.html?id=' + list[i].property.id + '">' + list[i].property.title + '</a>\n\
                                             </h4>\n\
-                                            <p>'+list[i].discription+'</p>\n\
+                                            <p>From ' + list[i].startDate + ' to ' + list[i].endDate + '</p>\n\
                                         </div>\n\
                                     </div>\n\
                                 </div>\n\
                                 ');
+                        }
+                        ;
                     }
-                };
+                } else {
+                    alert("Login needed");
+                }
             });
         </script>
     </body>

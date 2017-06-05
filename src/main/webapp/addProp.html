@@ -25,7 +25,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">RentUA</a>
+                    <a class="navbar-brand" href="index.html">RentUA</a>
                 </div>
                 <div class="collapse navbar-collapse" id="mainNavBar">
                     <ul class="nav navbar-nav">
@@ -45,11 +45,21 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <h1>Houses and Rooms</h1>
+                    <h1>Add houses or rooms</h1>
                 </div>
             </div>
-            <div class="row" id="list">
-
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <form action="http://localhost:8080/RentUA_RestAPI/rest/property" method="post" name="mytest" id="myTest">
+                        <input name="title" value="casa fixe" />
+                        <input type="number" name="price" value="500" />
+                        <select name="type">
+                            <option value="0">House</option>
+                            <option value="1">Bedroom</option>
+                        </select>
+                        <input type="submit">
+                    </form>
+                </div>
             </div>
         </div>
         <script type="text/javascript">
@@ -58,27 +68,42 @@
                 if (name)
                     $("#userName").text(name);
                 
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://localhost:8080/RentUA_RestAPI/rest/property", true);
-                xhr.setRequestHeader('Accept', 'application/json; charset=UTF-8');
-                xhr.send();
-                xhr.onloadend = function () {
-                    var list = JSON.parse(this.responseText);
-                    for(var i in list) {
-                        $("#list").append('\n\
-                                <div class="col-sm-4 col-lg-4 col-md-4">\n\
-                                    <div class="thumbnail">\n\
-                                        <div class="caption">\n\
-                                            <h4 class="pull-right">'+list[i].price+'</h4>\n\
-                                            <h4><a href="prop.html?id='+list[i].id+'">'+list[i].title+'</a>\n\
-                                            </h4>\n\
-                                            <p>'+list[i].discription+'</p>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                </div>\n\
-                                ');
+                var frm4 = $(document.mytest);
+                frm4.submit(function () {
+                    var form = document.mytest;
+                    event.preventDefault();
+
+                    var token = $.cookie("token");
+                    if (token) {
+
+                        var data = {};
+                        for (var i = 0, ii = form.length; i < ii; ++i) {
+                            var input = form[i];
+                            if (input.name) {
+                                data[input.name] = input.value;
+                            }
+                        }
+
+                        // construct an HTTP request
+                        var xhr = new XMLHttpRequest();
+                        xhr.open(form.method, form.action, true);
+                        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                        xhr.setRequestHeader("Authorization", token);
+
+                        // send the collected data as JSON
+                        alert(JSON.stringify(data));
+                        xhr.send(JSON.stringify(data));
+                        xhr.onloadend = function () {
+                            if (xhr.status === 201) {
+                                alert("House/Bedroom added");
+                            } else {
+                                alert("Error!");
+                            }
+                        };
+                    } else {
+                        alert("Login needed");
                     }
-                };
+                });
             });
         </script>
     </body>

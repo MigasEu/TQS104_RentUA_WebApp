@@ -7,11 +7,12 @@
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="../css/login.css">
-        
-        
+
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="../js/jquery.cookie.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        
+
         <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet" type="text/css">
     </head>
     <body>
@@ -28,23 +29,59 @@
                 </div>
                 <div class="collapse navbar-collapse" id="mainNavBar">
                     <ul class="nav navbar-nav">
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Contact us</a></li>
+                        <li><a href="../addProp.html">Add property</a></li>
+                        <li><a href="../myProps.html">My properties</a></li>
+                        <li><a href="../myRentals.html">My rentals</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
+                        <li><a id="userName" href="#"></a></li>
                         <li><a href="signup.html">Sign up</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
-        
+
         <div class="wrapper">
-            <form class="form-signin">       
+            <form action="http://localhost:8080/RentUA_RestAPI/rest/user/login" method="post" name="mylogin" id="myLogin" class="form-signin">       
                 <h2 class="form-signin-heading">Sign In</h2>
-                <input type="text" class="form-control" name="username" placeholder="Email Address" required="" autofocus="" />
-                <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
+                <input name="name" value="" class="form-control" autofocus required="" />
+                <input name="password" type="password" value="" class="form-control" required="" />
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>   
             </form>
         </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                name = $.cookie("name");
+                if (name)
+                    $("#userName").text(name);
+                
+                var frm2 = $(document.mylogin);
+                frm2.submit(function () {
+                    var form = document.mylogin;
+                    event.preventDefault();
+
+                    // construct an HTTP request
+                    var xhr = new XMLHttpRequest();
+                    xhr.open(form.method, form.action, true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+                    // send the collected data as JSON
+                    xhr.send(frm2.serialize());
+                    xhr.onloadend = function () {
+                        if (xhr.status === 200) {
+                            token = xhr.getResponseHeader("Authorization");
+                            $.cookie("token", token, {path: '/'});
+                            $.cookie("name", form.elements["name"].value, {path: '/'});
+                            $("#userName").text(form.elements["name"].value);
+                            alert("Login done!");
+                        } else if (xhr.status === 401) {
+                            alert("Incorrect name/password")
+                        } else {
+                            alert("Error!");
+                        }
+                    };
+                });
+            });
+        </script>
     </body>
 </html>
