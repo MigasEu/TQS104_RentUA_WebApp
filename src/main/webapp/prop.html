@@ -53,7 +53,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <form action="http://localhost:8080/RentUA_RestAPI/rest/rental" method="post" name="myrental" id="myRental">
+                    <form action="http://192.168.160.225:8080/RentUA_RestAPI/rest/rental" method="post" name="myrental" id="myRental">
                         <input name="startDate" value="2017-2" />
                         <input name="endDate" value="2018-1" />
                         <input type="hidden" name="propertyId" value="" id="propertyId" />
@@ -69,7 +69,7 @@
                     $("#userName").text(name);
                 
                 var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://localhost:8080/RentUA_RestAPI/rest/property/" + getUrlParameter("id"), true);
+                xhr.open("GET", "http://192.168.160.225:8080/RentUA_RestAPI/rest/property/" + getUrlParameter("id"), true);
                 xhr.setRequestHeader('Accept', 'application/json; charset=UTF-8');
                 xhr.send();
                 xhr.onloadend = function () {

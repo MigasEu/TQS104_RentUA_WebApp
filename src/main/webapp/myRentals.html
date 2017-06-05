@@ -60,7 +60,7 @@
                 
                 if (name) {
                     var xhr = new XMLHttpRequest();
-                    xhr.open("GET", "http://localhost:8080/RentUA_RestAPI/rest/rental/user/" + name, true);
+                    xhr.open("GET", "http://192.168.160.225:8080/RentUA_RestAPI/rest/rental/user/" + name, true);
                     xhr.setRequestHeader('Accept', 'application/json; charset=UTF-8');
                     xhr.send();
                     xhr.onloadend = function () {
