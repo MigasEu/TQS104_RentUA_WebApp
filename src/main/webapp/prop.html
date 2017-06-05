@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>RentUA - Home</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/mainpage.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="js/jquery.cookie.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainNavBar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.html">RentUA</a>
+                </div>
+                <div class="collapse navbar-collapse" id="mainNavBar">
+                    <ul class="nav navbar-nav">
+                        <li><a href="addProp.html">Add property</a></li>
+                        <li><a href="myProps.html">My properties</a></li>
+                        <li><a href="myRentals.html">My rentals</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a id="userName" href="#"></a></li>
+                        <li><a href="templates/signin.html">Sign in</a></li>
+                        <li><a href="templates/signup.html">Sign up</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1>Houses and Rooms</h1>
+                </div>
+            </div>
+            <div class="row" id="prop">
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <form action="http://192.168.160.225:8080/RentUA_RestAPI/rest/rental" method="post" name="myrental" id="myRental">
+                        <input name="startDate" value="2017-2" />
+                        <input name="endDate" value="2018-1" />
+                        <input type="hidden" name="propertyId" value="" id="propertyId" />
+                        <input type="submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                name = $.cookie("name");
+                if (name)
+                    $("#userName").text(name);
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://192.168.160.225:8080/RentUA_RestAPI/rest/property/" + getUrlParameter("id"), true);
+                xhr.setRequestHeader('Accept', 'application/json; charset=UTF-8');
+                xhr.send();
+                xhr.onloadend = function () {
+                    var prop = JSON.parse(this.responseText);
+                    $("#prop").html('\n\
+                            <div class="col-sm-12 col-lg-12 col-md-12">\n\
+                                <div class="thumbnail">\n\
+                                    <div class="caption">\n\
+                                        <h4 class="pull-right">' + prop.price + '</h4>\n\
+                                        <h4><a href="prop.html?id=' + prop.id + '">' + prop.title + '</a>\n\
+                                        </h4>\n\
+                                        <p>' + prop.discription + '</p>\n\
+                                    </div>\n\
+                                </div>\n\
+                            </div>\n\
+                            ');
+                    $("#propertyId").val(prop.id);
+                };
+
+
+
+                var frm5 = $(document.myrental);
+                frm5.submit(function () {
+                    var form = document.myrental;
+                    event.preventDefault();
+
+                    var token = $.cookie("token");
+                    if (token) {
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.open(form.method, form.action, true);
+                        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                        xhr.setRequestHeader("Authorization", token);
+
+                        // send the collected data as JSON
+                        xhr.send(frm5.serialize());
+                        xhr.onloadend = function () {
+                            if (xhr.status === 201) {
+                                alert("Rental done!");
+                            } else if (xhr.status === 409) {
+                                alert("House/Room already rented in that period");
+                            } else if (xhr.status === 422) {
+                                alert("Date(s) bad formated (year-semester) or start > end");
+                            } else {
+                                alert("Error!");
+                            }
+                        };
+                    } else {
+                        alert("Login needed");
+                    }
+                });
+            });
+
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                        sURLVariables = sPageURL.split('&'),
+                        sParameterName,
+                        i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : sParameterName[1];
+                    }
+                }
+            };
+        </script>
+    </body>
+</html>
