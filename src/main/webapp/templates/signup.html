@@ -58,7 +58,7 @@
                     $("#userName").text(name);
                 
                 var frm = $(document.myform);
-                frm.submit(function () {
+                frm.submit(function (event) {
                     var form = document.myform;
                     event.preventDefault();
 
